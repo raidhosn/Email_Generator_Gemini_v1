@@ -29,12 +29,12 @@ function App() {
       return row;
     });
 
-    // Enterprise Consistency UI Standard - Strict Transparent Grid
-    // - High contrast white text, 100% transparent backgrounds
-    // - Strict white borders for all rows/columns
-    const tableStyle = 'width: 100%; border-collapse: collapse; font-family: "Segoe UI", "Calibri", sans-serif; font-size: 10pt; color: #ffffff; border: 1px solid #ffffff; table-layout: fixed;'
-    const thStyle = 'border: 1px solid #ffffff; padding: 6px 12px; background-color: transparent; color: #ffffff; text-align: center; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;'
-    const tdStyle = 'border: 1px solid #ffffff; padding: 6px 12px; background-color: transparent; color: #ffffff; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;'
+    // Enterprise Consistency UI Standard - White Background Table
+    // - High contrast black text, white backgrounds
+    // - Strict black borders for all rows/columns
+    const tableStyle = 'width: 100%; border-collapse: collapse; font-family: "Segoe UI", "Calibri", sans-serif; font-size: 10pt; color: #000000; border: 1px solid #000000; table-layout: auto;'
+    const thStyle = 'border: 1px solid #000000; padding: 6px 12px; background-color: #ffffff; color: #000000; text-align: center; font-weight: bold; white-space: nowrap; vertical-align: middle;'
+    const tdStyle = 'border: 1px solid #000000; padding: 6px 12px; background-color: #ffffff; color: #000000; text-align: center; white-space: nowrap; vertical-align: middle;'
 
     let html = `<table style="${tableStyle}"><thead><tr>`
     headers.forEach(h => html += `<th style="${thStyle}">${h}</th>`)
@@ -55,9 +55,9 @@ function App() {
     setTimeout(() => {
       let result = ''
       // Common wrapper for email style to ensure font consistency in the preview
-      // using standard opaque colors for text to match the "email" look
+      // using standard light colors for text to match the "email" look
       const wrapEmail = (content: string) => `
-        <div style="font-family: 'Calibri', sans-serif; font-size: 11pt; color: #ffffff; text-align: left;">
+        <div style="font-family: 'Segoe UI', 'Calibri', sans-serif; font-size: 10pt; color: #000000; text-align: left; background-color: #ffffff; padding: 20px;">
           ${content}
         </div>
       `

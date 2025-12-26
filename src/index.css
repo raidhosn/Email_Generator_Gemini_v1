@@ -142,10 +142,10 @@ body {
   width: 100%;
   padding: 1.5rem;
   border-radius: 0.75rem;
-  background: #111827;
-  /* Deeper dark for high contrast with white borders */
+  background: #f8fafc;
+  /* Lighter background for the preview container */
   border: var(--glass-border);
-  color: #ffffff;
+  color: #0f172a;
   font-family: "Segoe UI", "Calibri", sans-serif;
   font-size: 10pt;
   line-height: 1.5;
@@ -155,10 +155,11 @@ body {
   box-sizing: border-box;
 }
 
-/* Internal table styling for app consistency where inline styles might be inherited */
+/* Internal table styling for app consistency */
 .output-preview table {
   margin: 1rem 0;
   border-collapse: collapse;
+  background-color: #ffffff;
 }
 
 .copy-btn {
