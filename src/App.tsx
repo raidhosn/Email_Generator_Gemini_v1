@@ -29,12 +29,12 @@ function App() {
       return row;
     });
 
-    // Enterprise Consistency UI Standard
-    // - Compact layout, white borders, bold headers
-    // - Preserves alignment and formatting when pasted to Word
+    // Enterprise Consistency UI Standard - Strict Transparent Grid
+    // - High contrast white text, 100% transparent backgrounds
+    // - Strict white borders for all rows/columns
     const tableStyle = 'width: 100%; border-collapse: collapse; font-family: "Segoe UI", "Calibri", sans-serif; font-size: 10pt; color: #ffffff; border: 1px solid #ffffff; table-layout: fixed;'
-    const thStyle = 'border: 1px solid #ffffff; padding: 4px 8px; background-color: rgba(255, 255, 255, 0.05); color: #ffffff; text-align: center; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'
-    const tdStyle = 'border: 1px solid #ffffff; padding: 4px 8px; background-color: transparent; color: #ffffff; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'
+    const thStyle = 'border: 1px solid #ffffff; padding: 6px 12px; background-color: transparent; color: #ffffff; text-align: center; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;'
+    const tdStyle = 'border: 1px solid #ffffff; padding: 6px 12px; background-color: transparent; color: #ffffff; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;'
 
     let html = `<table style="${tableStyle}"><thead><tr>`
     headers.forEach(h => html += `<th style="${thStyle}">${h}</th>`)
