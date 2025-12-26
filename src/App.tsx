@@ -1,25 +1,65 @@
 import { useState, useRef } from 'react'
 import './index.css'
 
+const translations = {
+  en: {
+    title: 'Email Generator AI',
+    pasteEmail: 'Paste Email Draft',
+    placeholder: 'Paste your rough email text here...',
+    tableFormat: 'Table Format',
+    enProofread: 'EN Proofread',
+    ptProofread: 'PT Proofread',
+    translator: 'EN ↔ PT Translator',
+    caseTitle: 'Case Title',
+    caseNotes: 'Case Notes',
+    troubleshooting: 'Troubleshooting',
+    preview: 'Generated Result (Preview)',
+    copyBtn: 'Copy as HTML',
+    copied: 'Copied to clipboard!',
+    copyFailed: 'Failed to copy',
+    loading: 'Generating...',
+    headers: ['Subscription ID', 'Request Type', 'VM Type', 'Region', 'Cores', 'Status'],
+    statusValue: 'Fulfilled'
+  },
+  pt: {
+    title: 'Gerador de E-mail AI',
+    pasteEmail: 'Cole o rascunho do e-mail',
+    placeholder: 'Cole o texto bruto do seu e-mail aqui...',
+    tableFormat: 'Formatar Tabela',
+    enProofread: 'Revisão EN',
+    ptProofread: 'Revisão PT',
+    translator: 'Tradutor EN ↔ PT',
+    caseTitle: 'Título do Caso',
+    caseNotes: 'Notas do Caso',
+    troubleshooting: 'Solução de Problemas',
+    preview: 'Resultado Gerado (Prévia)',
+    copyBtn: 'Copiar como HTML',
+    copied: 'Copiado para a área de transferência!',
+    copyFailed: 'Falha ao copiar',
+    loading: 'Gerando...',
+    headers: ['ID da Assinatura', 'Tipo de Solicitação', 'Tipo de VM', 'Região', 'Núcleos', 'Status'],
+    statusValue: 'Atendido'
+  }
+}
+
 function App() {
+  const [lang, setLang] = useState<'en' | 'pt'>('en')
   const [inputEmail, setInputEmail] = useState('')
   const [outputHtml, setOutputHtml] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
+  const [copyStatus, setCopyStatus] = useState('')
   const outputRef = useRef<HTMLDivElement>(null)
 
-  // Helper to generate the table HTML. 
-  // Accepts an optional 'context' string to modify content slightly for demo purposes, 
-  // ensuring the table STRUCTURE remains 100% intact.
+  const t = translations[lang]
+
   const generateTableHtml = (context: string = '') => {
-    // Mock data based on screenshot
-    const headers = ['Subscription ID', 'Request Type', 'VM Type', 'Region', 'Cores', 'Status']
+    const headers = t.headers
     const baseRowData = [
-      ['689ebfb2-0f24-4c89-85dd-9f40f58c22a9', 'Region Enablement', 'ESv3 Series', 'Brazil South', '350', 'Fulfilled'],
-      ['689ebfb2-0f24-4c89-85dd-9f40f58c22a9', 'Region Enablement', 'Ev3 Series', 'Brazil South', '350', 'Fulfilled'],
-      ['689ebfb2-0f24-4c89-85dd-9f40f58c22a9', 'Region Enablement', 'Dsv6 Series', 'Brazil South', '350', 'Fulfilled'],
+      ['689ebfb2-0f24-4c89-85dd-9f40f58c22a9', lang === 'en' ? 'Region Enablement' : 'Habilitação Regional', 'ESv3 Series', 'Brazil South', '350', t.statusValue],
+      ['689ebfb2-0f24-4c89-85dd-9f40f58c22a9', lang === 'en' ? 'Region Enablement' : 'Habilitação Regional', 'Ev3 Series', 'Brazil South', '350', t.statusValue],
+      ['689ebfb2-0f24-4c89-85dd-9f40f58c22a9', lang === 'en' ? 'Region Enablement' : 'Habilitação Regional', 'Dsv6 Series', 'Brazil South', '350', t.statusValue],
     ]
 
-    // Apply context to show button reactivity without breaking structure
     const rowData = baseRowData.map(row => {
       if (context) {
         const newRow = [...row];
@@ -29,9 +69,6 @@ function App() {
       return row;
     });
 
-    // Enterprise Consistency UI Standard - White Background Table
-    // - High contrast black text, white backgrounds
-    // - Strict black borders for all rows/columns
     const tableStyle = 'width: 100%; border-collapse: collapse; font-family: "Segoe UI", "Calibri", sans-serif; font-size: 10pt; color: #000000; border: 1px solid #000000; table-layout: auto;'
     const thStyle = 'border: 1px solid #000000; padding: 6px 12px; background-color: #ffffff; color: #000000; text-align: center; font-weight: bold; white-space: nowrap; vertical-align: middle;'
     const tdStyle = 'border: 1px solid #000000; padding: 6px 12px; background-color: #ffffff; color: #000000; text-align: center; white-space: nowrap; vertical-align: middle;'
@@ -54,8 +91,6 @@ function App() {
     setIsLoading(true)
     setTimeout(() => {
       let result = ''
-      // Common wrapper for email style to ensure font consistency in the preview
-      // using standard light colors for text to match the "email" look
       const wrapEmail = (content: string) => `
         <div style="font-family: 'Segoe UI', 'Calibri', sans-serif; font-size: 10pt; color: #000000; text-align: left; background-color: #ffffff; padding: 20px;">
           ${content}
@@ -64,17 +99,18 @@ function App() {
 
       const tableHtml = generateTableHtml()
 
-      // CRITICAL: ALL actions must return the TABLE to preserve structure.
-      // We modify the content slightly to reflect the action.
       switch (action) {
         case 'table-format':
-          result = wrapEmail(`
+          result = wrapEmail(lang === 'en' ? `
             <p><strong>Subject: Azure Quota Increase Request - Formatted Table</strong></p>
             <p>Here is the formatted table as requested:</p>
             <br/>
             ${tableHtml}
+          ` : `
+            <p><strong>Assunto: Solicitação de Aumento de Cota Azure - Tabela Formatada</strong></p>
+            <p>Segue a tabela formatada conforme solicitado:</p>
             <br/>
-            <p>Use the 'Copy as HTML' button to paste this into your email client.</p>
+            ${tableHtml}
           `)
           break
         case 'en-proofread':
@@ -85,7 +121,6 @@ function App() {
             <br/>
             ${tableHtml}
             <br/>
-            <p>If you have any further questions or require additional resources, please do not hesitate to contact our support team.</p>
             <p>Best regards,<br/>Azure Support Team</p>
           `)
           break
@@ -95,9 +130,8 @@ function App() {
             <p>Prezado Cliente,</p>
             <p>Informamos que sua solicitação de aumento de cota no Azure foi processada com sucesso. Abaixo estão os detalhes dos recursos aprovados:</p>
             <br/>
-            ${generateTableHtml('Aprovado')}
+            ${generateTableHtml(translations.pt.statusValue)}
             <br/>
-            <p>Caso tenha dúvidas adicionais ou necessite de mais recursos, por favor, entre em contato com nossa equipe de suporte.</p>
             <p>Atenciosamente,<br/>Equipe de Suporte Azure</p>
           `)
           break
@@ -108,50 +142,36 @@ function App() {
             <p>Please find the translated status of your request below / Segue abaixo o status traduzido da sua solicitação:</p>
             <br/>
             ${generateTableHtml('Translated / Traduzido')}
-            <br/>
-            <p>Thank you / Obrigado.</p>
           `)
           break
         case 'case-title':
           result = wrapEmail(`
             <p><strong>Case Title: Subscription Quota Enablement - [Case #12345]</strong></p>
-            <p>Hi there,</p>
-            <p>We have updated the case title to reflect the specific request. Please verify the details below:</p>
             <br/>
             ${tableHtml}
-            <br/>
-            <p>Let us know if this looks correct.</p>
           `)
           break
         case 'case-notes':
           result = wrapEmail(`
             <p><strong>Internal Case Notes</strong></p>
             <p><strong>Status:</strong> Resolved</p>
-            <p><strong>Action Taken:</strong> Verified capacity and approved quota increase for the following regions:</p>
             <br/>
             ${tableHtml}
-            <br/>
-            <p>Customer notified via email. Case ready for closure.</p>
           `)
           break
         case 'troubleshooting':
           result = wrapEmail(`
             <p><strong>Troubleshooting Report</strong></p>
-            <p>We investigated the deployment failure and confirmed it was due to a quota limit. We have now applied the necessary increase:</p>
             <br/>
             ${tableHtml}
-            <br/>
-            <p>Please attempt the deployment again. If the issue persists, provide the new error logs.</p>
           `)
           break
         default:
           result = wrapEmail(`
-            <p>Prezado(a),</p>
-            <p>Conforme solicitado, aumentamos sua cota de núcleos de computação do Azure para as VMs da série [# Series] na região [# region] para [# cores] núcleos, para a assinatura com ID: [Subscription ID].</p>
+            <p>${lang === 'en' ? 'Dear Customer,' : 'Prezado(a),'}</p>
+            <p>${lang === 'en' ? 'As requested, we have updated your quota.' : 'Conforme solicitado, atualizamos sua cota.'}</p>
             <br/>
             ${tableHtml}
-            <br/>
-            <p>Para verificar e confirmar um aumento de cota no Azure:</p>
           `)
       }
       setOutputHtml(result)
@@ -166,75 +186,102 @@ function App() {
       const blob = new Blob([outputHtml], { type })
       const data = [new ClipboardItem({ [type]: blob })]
       await navigator.clipboard.write(data)
-      alert("Copied to clipboard as HTML!")
+      setCopyStatus(t.copied)
+      setTimeout(() => setCopyStatus(''), 2000)
     } catch (err) {
       console.error('Failed to copy: ', err)
       navigator.clipboard.writeText(outputRef.current?.innerText || '')
-      alert("Copied as plain text (HTML copy failed check console).")
+      setCopyStatus(t.copyFailed)
+      setTimeout(() => setCopyStatus(''), 2000)
     }
   }
 
   return (
-    <>
-      <h1 className="title">Email Generator AI</h1>
+    <main id="main-content">
+      <div className="language-selector">
+        <button
+          className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+          onClick={() => setLang('en')}
+          aria-label="Switch to English"
+        >
+          EN
+        </button>
+        <button
+          className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}
+          onClick={() => setLang('pt')}
+          aria-label="Trocar para Português"
+        >
+          PT
+        </button>
+      </div>
+
+      <h1 className="title">{t.title}</h1>
 
       <div className="container">
         <div className="input-group">
-          <label className="label">Paste Email Draft</label>
+          <label className="label" htmlFor="email-draft">{t.pasteEmail}</label>
           <textarea
+            id="email-draft"
             className="textarea"
-            placeholder="Paste your rough email text here..."
+            placeholder={t.placeholder}
             value={inputEmail}
             onChange={(e) => setInputEmail(e.target.value)}
+            aria-describedby="draft-hint"
           />
         </div>
 
-        <div className="actions">
-          <button className="btn" onClick={() => handleAction('table-format')} disabled={isLoading}>
+        <div className="actions" role="group" aria-label="Action Buttons">
+          <button className="btn" onClick={() => handleAction('table-format')} disabled={isLoading} title={t.tableFormat}>
             <span className="btn-icon">📊</span>
-            Table Format
+            {t.tableFormat}
           </button>
-          <button className="btn" onClick={() => handleAction('en-proofread')} disabled={isLoading}>
+          <button className="btn" onClick={() => handleAction('en-proofread')} disabled={isLoading} title={t.enProofread}>
             <span className="btn-icon">📝</span>
-            EN Proofread
+            {t.enProofread}
           </button>
-          <button className="btn" onClick={() => handleAction('pt-proofread')} disabled={isLoading}>
+          <button className="btn" onClick={() => handleAction('pt-proofread')} disabled={isLoading} title={t.ptProofread}>
             <span className="btn-icon">🇧🇷</span>
-            PT Proofread
+            {t.ptProofread}
           </button>
-          <button className="btn" onClick={() => handleAction('translator')} disabled={isLoading}>
+          <button className="btn" onClick={() => handleAction('translator')} disabled={isLoading} title={t.translator}>
             <span className="btn-icon">🌐</span>
-            EN ↔ PT Translator
+            {t.translator}
           </button>
-          <button className="btn" onClick={() => handleAction('case-title')} disabled={isLoading}>
+          <button className="btn" onClick={() => handleAction('case-title')} disabled={isLoading} title={t.caseTitle}>
             <span className="btn-icon">🏷️</span>
-            Case Title
+            {t.caseTitle}
           </button>
-          <button className="btn" onClick={() => handleAction('case-notes')} disabled={isLoading}>
+          <button className="btn" onClick={() => handleAction('case-notes')} disabled={isLoading} title={t.caseNotes}>
             <span className="btn-icon">📋</span>
-            Case Notes
+            {t.caseNotes}
           </button>
-          <button className="btn" onClick={() => handleAction('troubleshooting')} disabled={isLoading}>
+          <button className="btn" onClick={() => handleAction('troubleshooting')} disabled={isLoading} title={t.troubleshooting}>
             <span className="btn-icon">🔧</span>
-            Troubleshooting
+            {t.troubleshooting}
           </button>
         </div>
 
         <div className="input-group">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <label className="label">Generated Result (Preview)</label>
-            <button className="copy-btn" onClick={copyToClipboard} disabled={!outputHtml}>
-              Copy as HTML
-            </button>
+            <label className="label" htmlFor="preview-output">{t.preview}</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {copyStatus && <span className="status-msg fade-in">{copyStatus}</span>}
+              <button className="copy-btn" onClick={copyToClipboard} disabled={!outputHtml || isLoading}>
+                {t.copyBtn}
+              </button>
+            </div>
           </div>
           <div
-            className="output-preview"
+            id="preview-output"
+            className={`output-preview ${isLoading ? 'loading' : ''}`}
             ref={outputRef}
-            dangerouslySetInnerHTML={{ __html: outputHtml || generateTableHtml() }} // Default to table if empty to show stability
+            aria-live="polite"
+            aria-label={t.preview}
+            dangerouslySetInnerHTML={{ __html: outputHtml || (isLoading ? `<p>${t.loading}</p>` : generateTableHtml()) }}
           />
         </div>
       </div>
-    </>
+    </main>
   )
 }
 
